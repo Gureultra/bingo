@@ -10,93 +10,179 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS (MODO CLARO - IDENTIDAD GURE) ---
+# --- ESTILOS CSS AVANZADOS (PREMIUM UI) ---
 st.markdown("""
     <style>
-    /* Fondo Blanco y Textos Oscuros */
+    /* Importar fuente moderna (opcional, usa sistema por defecto si falla) */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+    /* FONDO Y GENERAL */
     .stApp {
-        background-color: #ffffff;
+        background-color: #f8fafc; /* Gris muy muy claro para el fondo */
         color: #1f2937;
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Títulos */
+    /* CABECERA */
     h1 {
-        font-family: 'Arial Black', sans-serif;
+        font-family: 'Inter', sans-serif;
+        font-weight: 900 !important;
         font-style: italic;
-        color: #000000 !important;
         text-transform: uppercase;
-        margin-bottom: 0px;
+        letter-spacing: -1px;
+        margin-bottom: 0 !important;
+        font-size: 2.5rem !important;
     }
     h1 span {
-        color: #DC2626; /* Rojo Gure */
+        color: #DC2626;
     }
-    
-    /* Subtítulos */
     .caption-text {
-        font-size: 1.1em;
-        color: #4b5563;
+        font-size: 1.1rem;
+        color: #64748b;
         font-weight: 500;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        margin-top: -10px;
+    }
+
+    /* TARJETAS DE RETO (CARDS) */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] > div {
+        background-color: white;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        overflow: hidden; /* Para que la barra de color no se salga */
+        position: relative;
     }
     
-    /* Botones Rojos Estilo Gure */
+    /* Efecto Hover en las tarjetas */
+    div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] > div:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        border-color: #cbd5e1;
+    }
+
+    /* BOTONES */
     .stButton > button {
-        background-color: #DC2626;
+        background: linear-gradient(135deg, #DC2626 0%, #b91c1c 100%);
         color: white;
         border: none;
         border-radius: 8px;
-        font-weight: bold;
+        font-weight: 700;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 0.6rem 1rem;
         width: 100%;
-        transition: all 0.2s;
-        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
+        box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
     }
     .stButton > button:hover {
-        background-color: #b91c1c; /* Rojo más oscuro */
+        background: linear-gradient(135deg, #ef4444 0%, #DC2626 100%);
+        box-shadow: 0 6px 10px rgba(220, 38, 38, 0.3);
         color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 8px -1px rgba(220, 38, 38, 0.3);
-    }
-    
-    /* Estilos para las tarjetas de Reto (Cards) */
-    [data-testid="stVerticalBlock"] > [style*="flex-direction: column;"] > [data-testid="stVerticalBlock"] {
-        border: 1px solid #e5e7eb;
-        background-color: #ffffff;
-        border-radius: 12px;
-        padding: 1rem;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        transition: transform 0.2s;
-    }
-    
-    /* Texto de descripción del reto */
-    .challenge-desc {
-        font-size: 0.85em;
-        color: #6b7280;
-        margin-bottom: 10px;
-        line-height: 1.2;
-        min-height: 2.4em; /* Altura uniforme */
-    }
-    
-    /* Mensajes de éxito */
-    .stSuccess {
-        background-color: #ecfdf5;
-        color: #065f46;
         border: none;
-        font-size: 0.8em;
     }
-    .stError {
-        background-color: #fef2f2;
-        color: #991b1b;
-        border: none;
-        font-size: 0.8em;
+
+    /* MÉTRICAS (CAJA DESTACADA) */
+    div[data-testid="metric-container"] {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #f1f5f9;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        text-align: center;
     }
-    
-    /* Input de archivo más discreto */
+    div[data-testid="stMetricValue"] {
+        color: #DC2626;
+        font-size: 2rem !important;
+        font-weight: 900;
+    }
+    div[data-testid="stMetricLabel"] {
+        font-size: 0.9rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    /* Barra de Progreso */
+    div[data-testid="stProgress"] > div > div > div {
+        background-color: #DC2626;
+        height: 12px;
+        border-radius: 10px;
+    }
+
+    /* UPLOAD FILE */
+    div[data-testid="stFileUploader"] {
+        padding-top: 10px;
+    }
     div[data-testid="stFileUploader"] section {
-        padding: 10px;
-        background-color: #f9fafb;
+        background-color: #f8fafc;
+        border: 1px dashed #cbd5e1;
+        padding: 1rem;
+        border-radius: 8px;
     }
+    div[data-testid="stFileUploader"] button {
+        background-color: white;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+    }
+
+    /* EXPANDE (Validar) */
+    .streamlit-expanderHeader {
+        background-color: transparent;
+        color: #4b5563;
+        font-size: 0.9rem;
+        border: none;
+        padding-left: 0;
+    }
+    .streamlit-expanderContent {
+        border-top: 1px solid #f1f5f9;
+        padding-top: 10px;
+    }
+    
+    /* ICONOS GRANDES EN TARJETAS */
+    .card-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        text-align: center;
+    }
+    .card-title {
+        font-weight: 800;
+        font-size: 1rem;
+        color: #111827;
+        text-align: center;
+        margin-bottom: 5px;
+        line-height: 1.2;
+    }
+    .card-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        text-align: center;
+        line-height: 1.4;
+        min-height: 2.8em;
+        margin-bottom: 10px;
+    }
+    
+    /* ETIQUETAS DE ESTADO */
+    .status-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-bottom: 5px;
+        width: 100%;
+        text-align: center;
+    }
+    .status-pending {
+        background-color: #f1f5f9;
+        color: #64748b;
+    }
+    .status-done {
+        background-color: #dcfce7;
+        color: #166534;
+    }
+    
     </style>
 """, unsafe_allow_html=True)
 
@@ -130,17 +216,15 @@ if 'challenges' not in st.session_state:
 
 # --- SIMULADOR DE LECTURA FIT ---
 def parse_fit_file_simulated(uploaded_file):
-    time.sleep(0.8) # Un poco más rápido para mejorar UX
+    time.sleep(0.7) 
     seed = sum(ord(c) for c in uploaded_file.name)
     random.seed(seed)
     
-    # Generación de datos
-    duration = random.randint(30, 240) # minutos
-    calories = duration * random.randint(8, 16) # Kcal
-    intensity_factor = round(random.uniform(0.6, 1.2), 2) # IF
-    max_gradient = random.randint(4, 18) # % Pendiente
+    duration = random.randint(30, 240) 
+    calories = duration * random.randint(8, 16) 
+    intensity_factor = round(random.uniform(0.6, 1.2), 2) 
+    max_gradient = random.randint(4, 18) 
     
-    # Fecha simulada (Marzo 2026)
     day = random.randint(1, 30)
     hour = random.randint(6, 22)
     simulated_date = datetime.datetime(2026, 3, day, hour, 30)
@@ -158,152 +242,161 @@ def validate_rules(stats, rules):
     logs = []
     is_valid = True
     
-    # 1. Validar Fecha
     if stats['date'].year == 2026 and stats['date'].month == 3:
         logs.append("✅ Fecha correcta")
     else:
         logs.append("⚠️ Fecha incorrecta (Demo)")
         
-    # 2. Reglas Específicas
     if "minDuration" in rules:
-        if stats['duration'] >= rules['minDuration']:
-            logs.append(f"✅ Duración OK ({stats['duration']}m)")
+        if stats['duration'] >= rules['minDuration']: logs.append(f"✅ Duración OK ({stats['duration']}m)")
         else:
             logs.append(f"❌ Muy corto ({stats['duration']}m)")
             is_valid = False
             
     if "maxDuration" in rules:
-        if stats['duration'] <= rules['maxDuration']:
-            logs.append(f"✅ Tiempo OK ({stats['duration']}m)")
+        if stats['duration'] <= rules['maxDuration']: logs.append(f"✅ Tiempo OK ({stats['duration']}m)")
         else:
             logs.append(f"❌ Muy largo ({stats['duration']}m)")
             is_valid = False
 
     if "minCalories" in rules:
-        if stats['calories'] >= rules['minCalories']:
-            logs.append(f"✅ Kcal OK ({stats['calories']})")
+        if stats['calories'] >= rules['minCalories']: logs.append(f"✅ Kcal OK ({stats['calories']})")
         else:
             logs.append(f"❌ Pocas Kcal ({stats['calories']})")
             is_valid = False
             
     if "minIF" in rules:
-        if stats['if'] >= rules['minIF']:
-            logs.append(f"✅ IF OK ({stats['if']})")
+        if stats['if'] >= rules['minIF']: logs.append(f"✅ IF OK ({stats['if']})")
         else:
             logs.append(f"❌ Falta gas (IF {stats['if']})")
             is_valid = False
             
     if "minGradient" in rules:
-        if stats['gradient'] >= rules['minGradient']:
-            logs.append(f"✅ Rampa OK ({stats['gradient']}%)")
+        if stats['gradient'] >= rules['minGradient']: logs.append(f"✅ Rampa OK ({stats['gradient']}%)")
         else:
             logs.append(f"❌ Muy suave ({stats['gradient']}%)")
             is_valid = False
             
     if "maxTime" in rules:
         time_str = stats['date'].strftime("%H:%M")
-        if time_str < rules['maxTime']:
-            logs.append(f"✅ Hora OK ({time_str})")
+        if time_str < rules['maxTime']: logs.append(f"✅ Hora OK ({time_str})")
         else:
              logs.append(f"❌ Tarde ({time_str})")
              is_valid = False
 
     if "minTime" in rules:
         time_str = stats['date'].strftime("%H:%M")
-        if time_str > rules['minTime']:
-            logs.append(f"✅ Hora OK ({time_str})")
+        if time_str > rules['minTime']: logs.append(f"✅ Hora OK ({time_str})")
         else:
              logs.append(f"❌ Pronto ({time_str})")
              is_valid = False
              
     return is_valid, logs
 
-# --- INTERFAZ GRÁFICA (UI) ---
+# --- INTERFAZ UI ---
 
-# Cabecera con Logo GURE
-col_logo, col_title = st.columns([1, 3])
+# 1. Cabecera Limpia
+col_logo, col_title = st.columns([1, 4])
 with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
     st.markdown('<p class="caption-text">Un reto para la más Ciclópatas</p>', unsafe_allow_html=True)
 
-st.divider()
+st.markdown("---")
 
-# Barra de Progreso
+# 2. Panel de Progreso Destacado
 completed_count = sum(1 for c in st.session_state.challenges if c['completed'])
-st.progress(completed_count / 16)
-col_m1, col_m2 = st.columns(2)
-col_m1.metric("Retos Conseguidos", f"{completed_count}/16")
-col_m2.metric("Estado", "En curso...")
+cols_metrics = st.columns([3, 1, 1])
+with cols_metrics[0]:
+    st.caption("PROGRESO GLOBAL")
+    st.progress(completed_count / 16)
+with cols_metrics[1]:
+    st.metric("RETOS", f"{completed_count}/16")
+with cols_metrics[2]:
+    st.metric("ESTADO", "🔥" if completed_count > 0 else "💤")
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Grid de Retos (4x4) - VISUALMENTE MEJORADO
+# 3. Grid de Tarjetas (Diseño Visual)
 rows = [st.session_state.challenges[i:i + 4] for i in range(0, 16, 4)]
 
 for row in rows:
     cols = st.columns(4)
     for idx, challenge in enumerate(row):
         with cols[idx]:
-            # Usamos st.container con borde para crear efecto "Tarjeta"
+            # Contenedor con borde = Tarjeta
             with st.container(border=True):
-                # Cabecera de la tarjeta: Icono y Título
-                st.markdown(f"### {challenge['icon']}")
-                st.markdown(f"**{challenge['title']}**")
-                
-                # Descripción siempre visible
-                st.markdown(f"<div class='challenge-desc'>{challenge['desc']}</div>", unsafe_allow_html=True)
-                
+                # Estado visual
                 if challenge['completed']:
-                    # Estado Completado
-                    st.success(f"✅ Hecho: {challenge.get('date_str', '--/--')}")
-                    if st.button("Deshacer", key=f"undo_{challenge['id']}"):
+                    st.markdown(f"<div class='status-badge status-done'>COMPLETADO</div>", unsafe_allow_html=True)
+                else:
+                    st.markdown(f"<div class='status-badge status-pending'>PENDIENTE</div>", unsafe_allow_html=True)
+                
+                # Icono y Título grandes
+                st.markdown(f"<div class='card-icon'>{challenge['icon']}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='card-title'>{challenge['title']}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='card-desc'>{challenge['desc']}</div>", unsafe_allow_html=True)
+                
+                # Lógica de Botones
+                if challenge['completed']:
+                    st.caption(f"📅 {challenge.get('date_str', 'Hecho')}")
+                    if st.button("↺", key=f"undo_{challenge['id']}", help="Deshacer reto"):
                         challenge['completed'] = False
                         st.rerun()
                 else:
-                    # Estado Pendiente: Botón desplegable (Expander) para mantener limpieza
-                    with st.expander("Validar"):
+                    # Expander limpio para validar
+                    with st.expander("Subir .FIT"):
                         uploaded_file = st.file_uploader("", type=['fit'], key=f"up_{challenge['id']}", label_visibility="collapsed")
                         
-                        if uploaded_file is not None:
-                            with st.spinner('Analizando...'):
+                        if uploaded_file:
+                            with st.spinner('Validando...'):
                                 stats = parse_fit_file_simulated(uploaded_file)
                                 is_valid, logs = validate_rules(stats, challenge['rules'])
                                 
-                                st.caption(f"📊 {stats['duration']}m | {stats['calories']}kcal")
+                                st.markdown(f"**{stats['duration']}min** | **{stats['calories']}kcal**")
                                 
-                                for log in logs:
-                                    if "✅" in log: st.caption(f":green[{log}]")
-                                    else: st.caption(f":red[{log}]")
-                                
-                                if is_valid:
+                                # Mostrar solo errores si falla, o check si ok
+                                if not is_valid:
+                                    for log in logs:
+                                        if "❌" in log: st.caption(f":red[{log}]")
+                                    st.error("No válido")
+                                else:
+                                    st.success("¡Válido!")
                                     if st.button("CONFIRMAR", key=f"btn_{challenge['id']}"):
                                         challenge['completed'] = True
                                         challenge['date_str'] = stats['date'].strftime("%d/%m")
                                         st.balloons()
                                         time.sleep(0.5)
                                         st.rerun()
-                                else:
-                                    st.error("No válido")
 
-st.divider()
+st.markdown("---")
 
-# BOTÓN TELEGRAM ROJO
-share_text = f"🚴‍♂️ *BINGO GURE 2026* 🔴⚫ %0A✅ {completed_count}/16 Retos completados."
+# 4. Botón de Acción Final (Rojo GURE)
 group_link = "https://t.me/c/GURE_Ultra/50105"
 
 st.markdown(f"""
-    <div style="text-align: center;">
-        <p style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">
-            Tu progreso: <code style="background: #f3f4f6; color: #1f2937; padding: 4px; border-radius: 4px;">{completed_count}/16 Retos ✅</code>
-        </p>
+    <div style="text-align: center; padding: 20px;">
         <a href="{group_link}" target="_blank" style="text-decoration:none;">
-            <div style="background-color:#DC2626; color:white; padding:14px 24px; border-radius:8px; font-weight:bold; cursor:pointer; display: inline-block; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3); transition: transform 0.2s;">
-                ✈️ Comparte tu avance del reto
+            <div style="
+                background: linear-gradient(135deg, #DC2626 0%, #991b1b 100%);
+                color: white;
+                padding: 16px 32px;
+                border-radius: 50px;
+                font-weight: 800;
+                font-size: 18px;
+                letter-spacing: 1px;
+                box-shadow: 0 10px 20px -5px rgba(220, 38, 38, 0.4);
+                display: inline-block;
+                transition: transform 0.2s;
+            ">
+                🚀 COMPARTE TU AVANCE DEL RETO
             </div>
         </a>
+        <p style="margin-top: 15px; font-size: 12px; color: #94a3b8;">
+            Llevas {completed_count} de 16 retos completados
+        </p>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<br><center><small style='color: #9ca3af;'>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
+st.markdown("<br><center><small style='color: #cbd5e1;'>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
