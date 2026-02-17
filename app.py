@@ -5,88 +5,102 @@ import time
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
-    page_title="Bingo Gure 2026",
+    page_title="Bingo Ciclista Gure",
     page_icon="🚴",
     layout="centered"
 )
 
-# --- ESTILOS CSS (MODO OSCURO GURE) ---
+# --- ESTILOS CSS (MODO CLARO - IDENTIDAD GURE) ---
 st.markdown("""
     <style>
-    /* Fondo negro y textos blancos */
+    /* Fondo Blanco y Textos Oscuros */
     .stApp {
-        background-color: #000000;
-        color: #ffffff;
+        background-color: #ffffff;
+        color: #1f2937; /* Gris muy oscuro */
     }
     
     /* Títulos */
     h1 {
         font-family: 'Arial Black', sans-serif;
         font-style: italic;
-        color: #ffffff !important;
+        color: #000000 !important;
         text-transform: uppercase;
+        margin-bottom: 0px;
     }
     h1 span {
         color: #DC2626; /* Rojo Gure */
     }
     
-    /* Subtítulos y textos pequeños */
-    .css-10trblm, p, label {
-        color: #d4d4d8;
+    /* Subtítulos */
+    .caption-text {
+        font-size: 1.1em;
+        color: #4b5563;
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
     
-    /* Botones Rojos */
+    /* Botones Rojos Estilo Gure */
     .stButton > button {
         background-color: #DC2626;
         color: white;
         border: none;
-        border-radius: 6px;
+        border-radius: 8px;
         font-weight: bold;
         text-transform: uppercase;
         width: 100%;
-        transition: all 0.3s;
+        padding: 0.5rem 1rem;
+        transition: all 0.2s;
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.2);
     }
     .stButton > button:hover {
-        background-color: #b91c1c;
-        color: #ffffff;
-        border: 1px solid #ffffff;
+        background-color: #b91c1c; /* Rojo más oscuro */
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px -1px rgba(220, 38, 38, 0.3);
     }
     
-    /* Métricas (Números grandes) */
+    /* Métricas */
     div[data-testid="stMetricValue"] {
         color: #DC2626;
         font-weight: 900;
     }
     div[data-testid="stMetricLabel"] {
-        color: #a1a1aa;
+        color: #6b7280;
+        font-weight: bold;
     }
     
-    /* Tarjetas de los retos (Expanders) en modo oscuro */
+    /* Tarjetas de los retos (Expanders) - Diseño Uniforme */
     .streamlit-expanderHeader {
-        background-color: #18181b;
-        color: #ffffff;
-        font-weight: bold;
-        border: 1px solid #3f3f46;
+        background-color: #f9fafb; /* Gris muy claro */
+        color: #111827;
+        font-weight: 600;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
     }
     div[data-testid="stExpander"] {
         border: none;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        border-radius: 8px;
+        margin-bottom: 0.5rem;
     }
     
-    /* Mensajes de éxito y error (adaptados a oscuro) */
+    /* Mensajes de éxito y error */
     .stSuccess {
-        background-color: #064e3b; /* Verde oscuro */
-        color: #ecfdf5;
-        border-left: 5px solid #10b981;
+        background-color: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #10b981;
     }
     .stError {
-        background-color: #7f1d1d; /* Rojo oscuro */
-        color: #fef2f2;
-        border-left: 5px solid #ef4444;
+        background-color: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #ef4444;
     }
     
     /* Input de archivo */
     div[data-testid="stFileUploader"] section {
-        background-color: #18181b;
+        background-color: #f3f4f6;
+        border: 1px dashed #d1d5db;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -212,13 +226,15 @@ def validate_rules(stats, rules):
 # --- INTERFAZ GRÁFICA (UI) ---
 
 # Cabecera con Logo GURE
-col_logo, col_title = st.columns([1, 4])
+col_logo, col_title = st.columns([1, 3])
 with col_logo:
-    # Logo oficial (tiene fondo transparente o se ve bien en negro)
-    st.image("https://gureultra.com/wp-content/uploads/2024/10/GURE_ULTRA_RED_white.png", use_container_width=True)
+    # Logo oficial actualizado
+    st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.caption("Un reto para los muy ciclópatas")
+    st.markdown('<p class="caption-text">Un reto para la más Ciclópatas</p>', unsafe_allow_html=True)
+
+st.divider()
 
 # Barra de Progreso
 completed_count = sum(1 for c in st.session_state.challenges if c['completed'])
@@ -227,7 +243,7 @@ col_m1, col_m2 = st.columns(2)
 col_m1.metric("Retos Conseguidos", f"{completed_count}/16")
 col_m2.metric("Estado", "En curso...")
 
-st.divider()
+st.markdown("<br>", unsafe_allow_html=True)
 
 # Grid de Retos
 rows = [st.session_state.challenges[i:i + 4] for i in range(0, 16, 4)]
@@ -278,15 +294,15 @@ group_link = "https://t.me/c/GURE_Ultra/50105"
 
 st.markdown(f"""
     <div style="text-align: center;">
-        <p style="font-size: 14px; color: #a1a1aa; margin-bottom: 10px;">
-            Copia tu resultado: <code style="background: #333; color: white; padding: 4px; border-radius: 4px;">{completed_count}/16 Retos ✅</code>
+        <p style="font-size: 14px; color: #6b7280; margin-bottom: 10px;">
+            Copia tu resultado: <code style="background: #f3f4f6; color: #1f2937; padding: 4px; border-radius: 4px;">{completed_count}/16 Retos ✅</code>
         </p>
         <a href="{group_link}" target="_blank" style="text-decoration:none;">
-            <div style="background-color:#229ED9; color:white; padding:14px 24px; border-radius:8px; font-weight:bold; cursor:pointer; display: inline-block; font-size: 16px;">
-                ✈️ Comparte tus logros en el Canal del reto
+            <div style="background-color:#229ED9; color:white; padding:14px 24px; border-radius:8px; font-weight:bold; cursor:pointer; display: inline-block; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(34, 158, 217, 0.3);">
+                ✈️ Comparte tu avance del reto
             </div>
         </a>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<br><center><small style='color: #555;'>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
+st.markdown("<br><center><small style='color: #9ca3af;'>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
