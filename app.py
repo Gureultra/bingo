@@ -315,7 +315,7 @@ with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.markdown('<p class="caption-text">Un reto para las más Ciclópatas</p>', unsafe_allow_html=True)
+    st.markdown('<p class="caption-text">Un reto para los más Ciclópatas</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
