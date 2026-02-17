@@ -10,24 +10,29 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ESTILOS CSS (IDENTIDAD GURE - NEGRO Y ROJO) ---
+# --- ESTILOS CSS (MODO OSCURO GURE) ---
 st.markdown("""
     <style>
-    /* Fondo y textos generales */
+    /* Fondo negro y textos blancos */
     .stApp {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #000000;
+        color: #ffffff;
     }
     
     /* Títulos */
     h1 {
         font-family: 'Arial Black', sans-serif;
         font-style: italic;
-        color: #000000 !important;
+        color: #ffffff !important;
         text-transform: uppercase;
     }
     h1 span {
-        color: #DC2626; /* ROJO GURE */
+        color: #DC2626; /* Rojo Gure */
+    }
+    
+    /* Subtítulos y textos pequeños */
+    .css-10trblm, p, label {
+        color: #d4d4d8;
     }
     
     /* Botones Rojos */
@@ -42,9 +47,9 @@ st.markdown("""
         transition: all 0.3s;
     }
     .stButton > button:hover {
-        background-color: #000000;
-        color: #DC2626;
-        border: 1px solid #DC2626;
+        background-color: #b91c1c;
+        color: #ffffff;
+        border: 1px solid #ffffff;
     }
     
     /* Métricas (Números grandes) */
@@ -52,30 +57,41 @@ st.markdown("""
         color: #DC2626;
         font-weight: 900;
     }
-    
-    /* Tarjetas de los retos */
-    .streamlit-expanderHeader {
-        background-color: #f8f9fa;
-        color: #000000;
-        font-weight: bold;
-        border: 1px solid #e5e7eb;
+    div[data-testid="stMetricLabel"] {
+        color: #a1a1aa;
     }
     
-    /* Mensajes de éxito y error */
+    /* Tarjetas de los retos (Expanders) en modo oscuro */
+    .streamlit-expanderHeader {
+        background-color: #18181b;
+        color: #ffffff;
+        font-weight: bold;
+        border: 1px solid #3f3f46;
+    }
+    div[data-testid="stExpander"] {
+        border: none;
+    }
+    
+    /* Mensajes de éxito y error (adaptados a oscuro) */
     .stSuccess {
-        background-color: #ecfdf5;
-        color: #065f46;
+        background-color: #064e3b; /* Verde oscuro */
+        color: #ecfdf5;
         border-left: 5px solid #10b981;
     }
     .stError {
-        background-color: #fef2f2;
-        color: #991b1b;
+        background-color: #7f1d1d; /* Rojo oscuro */
+        color: #fef2f2;
         border-left: 5px solid #ef4444;
+    }
+    
+    /* Input de archivo */
+    div[data-testid="stFileUploader"] section {
+        background-color: #18181b;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- CONFIGURACIÓN DE LOS 16 RETOS ---
+# --- DATOS DEL BINGO (16 RETOS) ---
 if 'challenges' not in st.session_state:
     st.session_state.challenges = [
         # Fila 1
@@ -103,23 +119,19 @@ if 'challenges' not in st.session_state:
         {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "completed": False, "rules": {"minCalories": 1500}},
     ]
 
-# --- LÓGICA DE SIMULACIÓN DE DATOS FIT ---
-# (Simulamos la lectura del binario para que funcione la demo sin errores de librerías)
+# --- SIMULADOR DE LECTURA FIT ---
 def parse_fit_file_simulated(uploaded_file):
-    time.sleep(1.5) # Efecto visual de carga
-    
-    # Usamos el nombre del archivo para generar datos fijos (siempre iguales para el mismo archivo)
-    # Esto da sensación de realismo al validar.
+    time.sleep(1.0) # Efecto de "Procesando..."
     seed = sum(ord(c) for c in uploaded_file.name)
     random.seed(seed)
     
-    # Generamos métricas deportivas aleatorias pero realistas
+    # Generación de datos
     duration = random.randint(30, 240) # minutos
     calories = duration * random.randint(8, 16) # Kcal
     intensity_factor = round(random.uniform(0.6, 1.2), 2) # IF
     max_gradient = random.randint(4, 18) # % Pendiente
     
-    # Fecha simulada (Siempre cae en Marzo 2026 para que sea válido a veces)
+    # Fecha simulada (Marzo 2026)
     day = random.randint(1, 30)
     hour = random.randint(6, 22)
     simulated_date = datetime.datetime(2026, 3, day, hour, 30)
@@ -132,19 +144,18 @@ def parse_fit_file_simulated(uploaded_file):
         "gradient": max_gradient
     }
 
-# --- MOTOR DE VALIDACIÓN DE REGLAS ---
+# --- MOTOR DE REGLAS ---
 def validate_rules(stats, rules):
     logs = []
     is_valid = True
     
-    # 1. Validación de Fecha (Marzo 2026)
+    # 1. Validar Fecha
     if stats['date'].year == 2026 and stats['date'].month == 3:
         logs.append("✅ Fecha correcta (Marzo 2026)")
     else:
-        # En una app real esto sería error, en demo lo marcamos como aviso
         logs.append("⚠️ Fecha incorrecta (Permitido en Demo)")
         
-    # 2. Validación de Reglas Específicas
+    # 2. Reglas Específicas
     if "minDuration" in rules:
         if stats['duration'] >= rules['minDuration']:
             logs.append(f"✅ Duración OK ({stats['duration']} min)")
@@ -200,15 +211,16 @@ def validate_rules(stats, rules):
 
 # --- INTERFAZ GRÁFICA (UI) ---
 
-# 1. Cabecera con Logo GURE
+# Cabecera con Logo GURE
 col_logo, col_title = st.columns([1, 4])
 with col_logo:
+    # Logo oficial (tiene fondo transparente o se ve bien en negro)
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GURE_ULTRA_RED_white.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
     st.caption("Un reto para los muy ciclópatas")
 
-# 2. Barra de Progreso General
+# Barra de Progreso
 completed_count = sum(1 for c in st.session_state.challenges if c['completed'])
 st.progress(completed_count / 16)
 col_m1, col_m2 = st.columns(2)
@@ -217,48 +229,37 @@ col_m2.metric("Estado", "En curso...")
 
 st.divider()
 
-# 3. Grid de Retos (4 columnas x 4 filas)
+# Grid de Retos
 rows = [st.session_state.challenges[i:i + 4] for i in range(0, 16, 4)]
 
 for row in rows:
     cols = st.columns(4)
     for idx, challenge in enumerate(row):
         with cols[idx]:
-            # Icono de estado
             status_icon = "✅" if challenge['completed'] else "⬜"
             
-            # Tarjeta desplegable para cada reto
             with st.expander(f"{status_icon} {challenge['icon']} {challenge['title']}", expanded=False):
                 st.caption(challenge['desc'])
                 
                 if challenge['completed']:
-                    # Si ya está hecho
                     st.success(f"Completado: {challenge.get('date_str', '---')}")
                     if st.button("Desmarcar", key=f"undo_{challenge['id']}"):
                         challenge['completed'] = False
                         st.rerun()
                 else:
-                    # Si no está hecho: Subir archivo
                     uploaded_file = st.file_uploader("Sube .FIT", type=['fit'], key=f"up_{challenge['id']}")
                     
                     if uploaded_file is not None:
-                        with st.spinner('Analizando vatios y rampas...'):
-                            # Procesar y validar
+                        with st.spinner('Procesando datos...'):
                             stats = parse_fit_file_simulated(uploaded_file)
                             is_valid, logs = validate_rules(stats, challenge['rules'])
                             
-                            # Mostrar datos encontrados
-                            st.text(f"📊 {stats['duration']}m | {stats['calories']}kcal")
-                            st.text(f"⚡ IF {stats['if']} | ⛰️ {stats['gradient']}%")
+                            st.markdown(f"**Datos:** {stats['duration']}m | {stats['calories']}kcal | IF {stats['if']}")
                             
-                            st.divider()
-                            
-                            # Mostrar logs de validación
                             for log in logs:
-                                if "✅" in log: st.caption(f":green[{log}]")
-                                else: st.caption(f":red[{log}]")
+                                if "✅" in log: st.markdown(f":green[{log}]")
+                                else: st.markdown(f":red[{log}]")
                             
-                            # Botón de Confirmación (solo si es válido)
                             if is_valid:
                                 if st.button("CONFIRMAR RETO", key=f"btn_{challenge['id']}"):
                                     challenge['completed'] = True
@@ -271,22 +272,21 @@ for row in rows:
 
 st.divider()
 
-# 4. Footer y Botón de Compartir
+# BOTÓN TELEGRAM PERSONALIZADO
 share_text = f"🚴‍♂️ *BINGO GURE 2026* 🔴⚫ %0A✅ {completed_count}/16 Retos completados."
 group_link = "https://t.me/c/GURE_Ultra/50105"
 
 st.markdown(f"""
     <div style="text-align: center;">
-        <p style="font-size: 12px; color: gray; margin-bottom: 5px;">Copia tu resultado y pégalo en el grupo:</p>
-        <code style="background: #f1f1f1; padding: 5px; border-radius: 4px; display: block; margin-bottom: 10px;">
-            BINGO GURE: {completed_count}/16 Retos ✅
-        </code>
+        <p style="font-size: 14px; color: #a1a1aa; margin-bottom: 10px;">
+            Copia tu resultado: <code style="background: #333; color: white; padding: 4px; border-radius: 4px;">{completed_count}/16 Retos ✅</code>
+        </p>
         <a href="{group_link}" target="_blank" style="text-decoration:none;">
-            <div style="background-color:#229ED9; color:white; padding:12px 24px; border-radius:8px; font-weight:bold; cursor:pointer; display: inline-block;">
-                ✈️ IR AL GRUPO TELEGRAM
+            <div style="background-color:#229ED9; color:white; padding:14px 24px; border-radius:8px; font-weight:bold; cursor:pointer; display: inline-block; font-size: 16px;">
+                ✈️ Comparte tus logros en el Canal del reto
             </div>
         </a>
     </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<br><center><small>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
+st.markdown("<br><center><small style='color: #555;'>© 2026 GURE Ultra Team</small></center>", unsafe_allow_html=True)
