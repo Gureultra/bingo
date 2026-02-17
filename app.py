@@ -204,28 +204,29 @@ st.markdown("""
 if 'challenges' not in st.session_state:
     st.session_state.challenges = [
         # Fila 1
-        {"id": 1, "title": "El Panadero", "desc": "Terminar antes de las 08:00 AM", "icon": "☀️", "completed": False, "rules": {"maxTime": "08:00"}},
-        {"id": 2, "title": "El Vampiro", "desc": "Empezar después de las 21:00 PM", "icon": "🌙", "completed": False, "rules": {"minTime": "21:00"}},
-        {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "completed": False, "rules": {}},
-        {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0 (Full Gas)", "icon": "⚡", "completed": False, "rules": {"maxDuration": 45, "minIF": 1.0}},
+        {"id": 1, "title": "El Panadero", "desc": "Terminar antes de las 08:00 AM", "icon": "☀️", "type": "fit", "completed": False, "rules": {"maxTime": "08:00"}},
+        {"id": 2, "title": "El Vampiro", "desc": "Empezar después de las 21:00 PM", "icon": "🌙", "type": "fit", "completed": False, "rules": {"minTime": "21:00"}},
+        {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "type": "fit", "completed": False, "rules": {}},
+        {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0 (Full Gas)", "icon": "⚡", "type": "fit", "completed": False, "rules": {"maxDuration": 45, "minIF": 1.0}},
         
         # Fila 2
-        {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "completed": False, "rules": {}},
-        {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "completed": False, "rules": {}},
-        {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "completed": False, "rules": {}},
-        {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "completed": False, "rules": {}},
+        {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "type": "fit", "completed": False, "rules": {}},
+        {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "type": "fit", "completed": False, "rules": {}},
+        {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "type": "fit", "completed": False, "rules": {}},
+        {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "type": "fit", "completed": False, "rules": {}},
         
         # Fila 3
-        {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "completed": False, "rules": {}},
-        {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "completed": False, "rules": {"minDuration": 60}},
-        {"id": 11, "title": "El Muro", "desc": "Rampa del 14% o superior", "icon": "⛰️", "completed": False, "rules": {"minGradient": 14}},
-        {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "completed": False, "rules": {}},
+        {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "type": "fit", "completed": False, "rules": {}},
+        {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "type": "fit", "completed": False, "rules": {"minDuration": 60}},
+        {"id": 11, "title": "El Muro", "desc": "Rampa del 14% o superior", "icon": "⛰️", "type": "fit", "completed": False, "rules": {"minGradient": 14}},
+        {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "completed": False, "rules": {}},
         
         # Fila 4
-        {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "completed": False, "rules": {}},
-        {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "completed": False, "rules": {}},
-        {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "completed": False, "rules": {"minDuration": 180}},
-        {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "completed": False, "rules": {"minCalories": 1500}},
+        # CAMBIO AQUÍ: ID 13 es tipo 'image'
+        {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "type": "image", "completed": False, "rules": {}},
+        {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "completed": False, "rules": {}},
+        {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "type": "fit", "completed": False, "rules": {"minDuration": 180}},
+        {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "type": "fit", "completed": False, "rules": {"minCalories": 1500}},
     ]
 
 # --- SIMULADOR DE LECTURA FIT ---
@@ -309,17 +310,15 @@ def validate_rules(stats, rules):
 
 # --- INTERFAZ UI ---
 
-# 1. Cabecera Limpia
 col_logo, col_title = st.columns([1, 3])
 with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.markdown('<p class="caption-text">Un reto para los más Ciclópatas</p>', unsafe_allow_html=True)
+    st.markdown('<p class="caption-text">Un reto para las más Ciclópatas</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# 2. Panel de Progreso Destacado
 completed_count = sum(1 for c in st.session_state.challenges if c['completed'])
 cols_metrics = st.columns([3, 1, 1])
 with cols_metrics[0]:
@@ -332,61 +331,70 @@ with cols_metrics[2]:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 3. Grid de Tarjetas (Diseño Visual)
+# Grid de Retos (4x4)
 rows = [st.session_state.challenges[i:i + 4] for i in range(0, 16, 4)]
 
 for row in rows:
     cols = st.columns(4)
     for idx, challenge in enumerate(row):
         with cols[idx]:
-            # Contenedor con borde = Tarjeta
             with st.container(border=True):
-                # Estado visual
                 if challenge['completed']:
                     st.markdown(f"<div class='status-badge status-done'>COMPLETADO</div>", unsafe_allow_html=True)
                 else:
                     st.markdown(f"<div class='status-badge status-pending'>PENDIENTE</div>", unsafe_allow_html=True)
                 
-                # Icono y Título grandes
                 st.markdown(f"<div class='card-icon'>{challenge['icon']}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='card-title'>{challenge['title']}</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='card-desc'>{challenge['desc']}</div>", unsafe_allow_html=True)
                 
-                # Lógica de Botones
                 if challenge['completed']:
                     st.caption(f"📅 {challenge.get('date_str', 'Hecho')}")
                     if st.button("↺", key=f"undo_{challenge['id']}", help="Deshacer reto"):
                         challenge['completed'] = False
                         st.rerun()
                 else:
-                    # Expander limpio para validar
-                    with st.expander("Subir .FIT"):
-                        uploaded_file = st.file_uploader("", type=['fit'], key=f"up_{challenge['id']}", label_visibility="collapsed")
+                    # Lógica diferenciada por TIPO de archivo
+                    challenge_type = challenge.get('type', 'fit')
+                    label_text = "Subir Foto" if challenge_type == 'image' else "Subir .FIT"
+                    file_types = ['png', 'jpg', 'jpeg'] if challenge_type == 'image' else ['fit']
+                    
+                    with st.expander(label_text):
+                        uploaded_file = st.file_uploader("", type=file_types, key=f"up_{challenge['id']}", label_visibility="collapsed")
                         
                         if uploaded_file:
-                            with st.spinner('Validando...'):
-                                stats = parse_fit_file_simulated(uploaded_file)
-                                is_valid, logs = validate_rules(stats, challenge['rules'])
-                                
-                                st.markdown(f"**{stats['duration']}min** | **{stats['calories']}kcal**")
-                                
-                                # Mostrar solo errores si falla, o check si ok
-                                if not is_valid:
-                                    for log in logs:
-                                        if "❌" in log: st.caption(f":red[{log}]")
-                                    st.error("No válido")
-                                else:
-                                    st.success("¡Válido!")
-                                    if st.button("CONFIRMAR", key=f"btn_{challenge['id']}"):
-                                        challenge['completed'] = True
-                                        challenge['date_str'] = stats['date'].strftime("%d/%m")
-                                        st.balloons()
-                                        time.sleep(0.5)
-                                        st.rerun()
+                            if challenge_type == 'image':
+                                # Lógica para IMAGEN
+                                st.image(uploaded_file, caption="Evidencia", use_container_width=True)
+                                if st.button("CONFIRMAR FOTO", key=f"btn_{challenge['id']}"):
+                                    challenge['completed'] = True
+                                    challenge['date_str'] = datetime.datetime.now().strftime("%d/%m")
+                                    st.balloons()
+                                    time.sleep(0.5)
+                                    st.rerun()
+                            else:
+                                # Lógica para FIT
+                                with st.spinner('Validando...'):
+                                    stats = parse_fit_file_simulated(uploaded_file)
+                                    is_valid, logs = validate_rules(stats, challenge['rules'])
+                                    
+                                    st.markdown(f"**{stats['duration']}min** | **{stats['calories']}kcal**")
+                                    
+                                    if not is_valid:
+                                        for log in logs:
+                                            if "❌" in log: st.caption(f":red[{log}]")
+                                        st.error("No válido")
+                                    else:
+                                        st.success("¡Válido!")
+                                        if st.button("CONFIRMAR", key=f"btn_{challenge['id']}"):
+                                            challenge['completed'] = True
+                                            challenge['date_str'] = stats['date'].strftime("%d/%m")
+                                            st.balloons()
+                                            time.sleep(0.5)
+                                            st.rerun()
 
 st.markdown("---")
 
-# 4. Botón de Acción Final (Rojo GURE)
 group_link = "https://t.me/c/GURE_Ultra/50105"
 
 st.markdown(f"""
