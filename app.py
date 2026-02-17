@@ -13,8 +13,9 @@ st.set_page_config(
 # --- ESTILOS CSS AVANZADOS (PREMIUM UI) ---
 st.markdown("""
     <style>
-    /* Importar fuente moderna (opcional, usa sistema por defecto si falla) */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+    /* Importar fuente Saira (Encabezados) e Inter (Cuerpo) */
+    @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
     /* FONDO Y GENERAL */
     .stApp {
@@ -23,24 +24,28 @@ st.markdown("""
         font-family: 'Inter', sans-serif;
     }
     
-    /* CABECERA */
+    /* CABECERA (FUENTE SAIRA) */
     h1 {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Saira', sans-serif !important;
         font-weight: 900 !important;
         font-style: italic;
         text-transform: uppercase;
-        letter-spacing: -1px;
+        letter-spacing: -0.02em;
         margin-bottom: 0 !important;
-        font-size: 2.5rem !important;
+        font-size: 3rem !important;
+        line-height: 1 !important;
     }
     h1 span {
         color: #DC2626;
     }
     .caption-text {
-        font-size: 1.1rem;
+        font-family: 'Saira', sans-serif;
+        font-size: 1.2rem;
         color: #64748b;
-        font-weight: 500;
-        margin-top: -10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        margin-top: 5px;
+        letter-spacing: 0.5px;
     }
 
     /* TARJETAS DE RETO (CARDS) */
@@ -50,7 +55,7 @@ st.markdown("""
         border: 1px solid #e2e8f0;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
-        overflow: hidden; /* Para que la barra de color no se salga */
+        overflow: hidden;
         position: relative;
     }
     
@@ -67,6 +72,7 @@ st.markdown("""
         color: white;
         border: none;
         border-radius: 8px;
+        font-family: 'Saira', sans-serif;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -91,11 +97,14 @@ st.markdown("""
         text-align: center;
     }
     div[data-testid="stMetricValue"] {
+        font-family: 'Saira', sans-serif;
         color: #DC2626;
-        font-size: 2rem !important;
+        font-size: 2.2rem !important;
         font-weight: 900;
+        line-height: 1;
     }
     div[data-testid="stMetricLabel"] {
+        font-family: 'Saira', sans-serif;
         font-size: 0.9rem;
         color: #64748b;
         font-weight: 600;
@@ -132,13 +141,14 @@ st.markdown("""
         font-size: 0.9rem;
         border: none;
         padding-left: 0;
+        font-family: 'Inter', sans-serif;
     }
     .streamlit-expanderContent {
         border-top: 1px solid #f1f5f9;
         padding-top: 10px;
     }
     
-    /* ICONOS GRANDES EN TARJETAS */
+    /* ICONOS Y TITULOS EN TARJETAS */
     .card-icon {
         font-size: 2.5rem;
         margin-bottom: 0.5rem;
@@ -146,15 +156,17 @@ st.markdown("""
         text-align: center;
     }
     .card-title {
+        font-family: 'Saira', sans-serif;
         font-weight: 800;
-        font-size: 1rem;
+        font-size: 1.1rem;
         color: #111827;
+        text-transform: uppercase;
         text-align: center;
         margin-bottom: 5px;
-        line-height: 1.2;
+        line-height: 1.1;
     }
     .card-desc {
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         color: #64748b;
         text-align: center;
         line-height: 1.4;
@@ -165,22 +177,24 @@ st.markdown("""
     /* ETIQUETAS DE ESTADO */
     .status-badge {
         display: inline-block;
-        padding: 2px 8px;
-        border-radius: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-family: 'Saira', sans-serif;
         font-size: 0.7rem;
         font-weight: bold;
         text-transform: uppercase;
-        margin-bottom: 5px;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
         width: 100%;
         text-align: center;
     }
     .status-pending {
         background-color: #f1f5f9;
-        color: #64748b;
+        color: #94a3b8;
     }
     .status-done {
-        background-color: #dcfce7;
-        color: #166534;
+        background-color: #000000;
+        color: #ffffff;
     }
     
     </style>
@@ -296,12 +310,12 @@ def validate_rules(stats, rules):
 # --- INTERFAZ UI ---
 
 # 1. Cabecera Limpia
-col_logo, col_title = st.columns([1, 4])
+col_logo, col_title = st.columns([1, 3])
 with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.markdown('<p class="caption-text">Un reto para la más Ciclópatas</p>', unsafe_allow_html=True)
+    st.markdown('<p class="caption-text">Un reto para las más Ciclópatas</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -383,6 +397,7 @@ st.markdown(f"""
                 color: white;
                 padding: 16px 32px;
                 border-radius: 50px;
+                font-family: 'Saira', sans-serif;
                 font-weight: 800;
                 font-size: 18px;
                 letter-spacing: 1px;
