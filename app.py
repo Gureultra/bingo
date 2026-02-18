@@ -222,7 +222,7 @@ if 'challenges' not in st.session_state:
         {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "completed": False, "rules": {}},
         
         # Fila 4
-        # CAMBIO AQUÍ: ID 13 es tipo 'image'
+        # ID 13 es tipo 'image'
         {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "type": "image", "completed": False, "rules": {}},
         {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "completed": False, "rules": {}},
         {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "type": "fit", "completed": False, "rules": {"minDuration": 180}},
@@ -354,9 +354,8 @@ for row in rows:
                         challenge['completed'] = False
                         st.rerun()
                 else:
-                    # Lógica diferenciada por TIPO de archivo
                     challenge_type = challenge.get('type', 'fit')
-                    label_text = "Subir Foto" if challenge_type == 'image' else "Subir .FIT"
+                    label_text = "Sube imagen" if challenge_type == 'image' else "Subir .FIT"
                     file_types = ['png', 'jpg', 'jpeg'] if challenge_type == 'image' else ['fit']
                     
                     with st.expander(label_text):
@@ -364,7 +363,6 @@ for row in rows:
                         
                         if uploaded_file:
                             if challenge_type == 'image':
-                                # Lógica para IMAGEN
                                 st.image(uploaded_file, caption="Evidencia", use_container_width=True)
                                 if st.button("CONFIRMAR FOTO", key=f"btn_{challenge['id']}"):
                                     challenge['completed'] = True
@@ -373,7 +371,6 @@ for row in rows:
                                     time.sleep(0.5)
                                     st.rerun()
                             else:
-                                # Lógica para FIT
                                 with st.spinner('Validando...'):
                                     stats = parse_fit_file_simulated(uploaded_file)
                                     is_valid, logs = validate_rules(stats, challenge['rules'])
@@ -395,11 +392,23 @@ for row in rows:
 
 st.markdown("---")
 
-group_link = "https://t.me/c/GURE_Ultra/50105"
+# --- BOTÓN DE COMPARTIR AVANZADO ---
+group_link = "https://t.me/GURE_ultra_Channel"
+
+# Generar texto del portapapeles con detalle
+completed_list = [c['title'] for c in st.session_state.challenges if c['completed']]
+if completed_list:
+    challenges_joined = "\\n✅ ".join(completed_list)
+    clipboard_content = f"🚴‍♂️ *BINGO GURE 2026* 🔴⚫\\n\\n🏆 Progreso: {completed_count}/16\\n\\nHe completado:\\n✅ {challenges_joined}\\n\\n#BingoGure"
+else:
+    clipboard_content = "🚴‍♂️ *BINGO GURE 2026* 🔴⚫\\n\\n¡Empiezo el reto! 0/16 completados.\\n\\n#BingoGure"
+
+# Limpieza para JS
+clipboard_content_js = clipboard_content.replace('"', '\\"').replace("'", "\\'")
 
 st.markdown(f"""
     <div style="text-align: center; padding: 20px;">
-        <a href="{group_link}" target="_blank" style="text-decoration:none;">
+        <a href="{group_link}" target="_blank" onclick="navigator.clipboard.writeText('{clipboard_content_js}'); alert('¡Resumen copiado! Pégalo en el canal.');" style="text-decoration:none;">
             <div style="
                 background: linear-gradient(135deg, #DC2626 0%, #991b1b 100%);
                 color: white;
@@ -417,7 +426,7 @@ st.markdown(f"""
             </div>
         </a>
         <p style="margin-top: 15px; font-size: 12px; color: #94a3b8;">
-            Llevas {completed_count} de 16 retos completados
+            (Se copiará tu resumen y se abrirá el canal)
         </p>
     </div>
 """, unsafe_allow_html=True)
