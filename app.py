@@ -153,7 +153,7 @@ with col_title:
     
     # Botón para cerrar sesión o cambiar de usuario
     st.caption(f"👤 Ciclópata: **{st.session_state.username}**")
-    if st.button("Cambiar usuario", size="small"):
+    if st.button("Cambiar usuario"):
         st.session_state.username = None
         st.rerun()
 
