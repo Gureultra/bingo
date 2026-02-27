@@ -13,18 +13,15 @@ st.set_page_config(
 # --- ESTILOS CSS AVANZADOS (PREMIUM UI) ---
 st.markdown("""
     <style>
-    /* Importar fuente Saira (Encabezados) e Inter (Cuerpo) */
     @import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,400;0,600;0,800;0,900;1,900&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
-    /* FONDO Y GENERAL */
     .stApp {
-        background-color: #f8fafc; /* Gris muy muy claro para el fondo */
+        background-color: #f8fafc; 
         color: #1f2937;
         font-family: 'Inter', sans-serif;
     }
     
-    /* CABECERA (FUENTE SAIRA) */
     h1 {
         font-family: 'Saira', sans-serif !important;
         font-weight: 900 !important;
@@ -48,7 +45,6 @@ st.markdown("""
         letter-spacing: 0.5px;
     }
 
-    /* TARJETAS DE RETO (CARDS) */
     div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] > div {
         background-color: white;
         border-radius: 12px;
@@ -59,14 +55,12 @@ st.markdown("""
         position: relative;
     }
     
-    /* Efecto Hover en las tarjetas */
     div[data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlockBorderWrapper"] > div:hover {
         transform: translateY(-4px);
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         border-color: #cbd5e1;
     }
 
-    /* BOTONES */
     .stButton > button {
         background: linear-gradient(135deg, #DC2626 0%, #b91c1c 100%);
         color: white;
@@ -87,7 +81,6 @@ st.markdown("""
         border: none;
     }
 
-    /* MÉTRICAS (CAJA DESTACADA) */
     div[data-testid="metric-container"] {
         background-color: white;
         padding: 15px;
@@ -111,14 +104,12 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* Barra de Progreso */
     div[data-testid="stProgress"] > div > div > div {
         background-color: #DC2626;
         height: 12px;
         border-radius: 10px;
     }
 
-    /* UPLOAD FILE */
     div[data-testid="stFileUploader"] {
         padding-top: 10px;
     }
@@ -134,7 +125,6 @@ st.markdown("""
         border: 1px solid #cbd5e1;
     }
 
-    /* EXPANDE (Validar) */
     .streamlit-expanderHeader {
         background-color: transparent;
         color: #4b5563;
@@ -148,7 +138,6 @@ st.markdown("""
         padding-top: 10px;
     }
     
-    /* ICONOS Y TITULOS EN TARJETAS */
     .card-icon {
         font-size: 2.5rem;
         margin-bottom: 0.5rem;
@@ -174,7 +163,6 @@ st.markdown("""
         margin-bottom: 10px;
     }
     
-    /* ETIQUETAS DE ESTADO */
     .status-badge {
         display: inline-block;
         padding: 4px 8px;
@@ -200,48 +188,80 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- DATOS DEL BINGO (16 RETOS) ---
+# --- DATOS DEL BINGO CON TODAS LAS REGLAS ACTIVADAS ---
 if 'challenges' not in st.session_state:
     st.session_state.challenges = [
         # Fila 1
         {"id": 1, "title": "El Panadero", "desc": "Terminar antes de las 08:00 AM", "icon": "☀️", "type": "fit", "completed": False, "rules": {"maxTime": "08:00"}},
         {"id": 2, "title": "El Vampiro", "desc": "Empezar después de las 21:00 PM", "icon": "🌙", "type": "fit", "completed": False, "rules": {"minTime": "21:00"}},
-        {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "type": "fit", "completed": False, "rules": {}},
-        {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0 (Full Gas)", "icon": "⚡", "type": "fit", "completed": False, "rules": {"maxDuration": 45, "minIF": 1.0}},
+        {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "type": "fit", "completed": False, "rules": {"mustBeWeekend": True}},
+        {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0", "icon": "⚡", "type": "fit", "completed": False, "rules": {"maxDuration": 45, "minIF": 1.0}},
         
         # Fila 2
-        {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "type": "fit", "completed": False, "rules": {}},
-        {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "type": "fit", "completed": False, "rules": {}},
-        {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "type": "fit", "completed": False, "rules": {}},
-        {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "type": "fit", "completed": False, "rules": {}},
+        {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "type": "fit", "completed": False, "rules": {"requiredRegion": "Galicia"}},
+        {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "type": "fit", "completed": False, "rules": {"requiredDevice": ["Bkool", "Rouvy"]}},
+        {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "type": "fit", "completed": False, "rules": {"isClassic": True}},
+        {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "type": "fit", "completed": False, "rules": {"isExotic": True}},
         
         # Fila 3
-        {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "type": "fit", "completed": False, "rules": {}},
-        {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "type": "fit", "completed": False, "rules": {"minDuration": 60}},
+        {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "type": "fit", "completed": False, "rules": {"minCadence": 85}},
+        {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "type": "fit", "completed": False, "rules": {"minDuration": 60, "maxHRZone": 2}},
         {"id": 11, "title": "El Muro", "desc": "Rampa del 14% o superior", "icon": "⛰️", "type": "fit", "completed": False, "rules": {"minGradient": 14}},
-        {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "completed": False, "rules": {}},
+        {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "completed": False, "rules": {"isPalindrome": True}},
         
         # Fila 4
-        # ID 13 es tipo 'image'
         {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "type": "image", "completed": False, "rules": {}},
-        {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "completed": False, "rules": {}},
+        {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "completed": False, "rules": {"minParticipants": 2}},
         {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "type": "fit", "completed": False, "rules": {"minDuration": 180}},
         {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "type": "fit", "completed": False, "rules": {"minCalories": 1500}},
     ]
 
-# --- SIMULADOR DE LECTURA FIT ---
+# --- EXTRACTOR DE DATOS FIT INTELIGENTE ---
 def parse_fit_file_simulated(uploaded_file):
     time.sleep(0.7) 
+    fname = uploaded_file.name.lower()
     seed = sum(ord(c) for c in uploaded_file.name)
     random.seed(seed)
     
-    duration = random.randint(30, 240) 
-    calories = duration * random.randint(8, 16) 
-    intensity_factor = round(random.uniform(0.6, 1.2), 2) 
-    max_gradient = random.randint(4, 18) 
+    # Datos base aleatorios
+    duration = random.randint(46, 179) 
+    calories = duration * random.randint(8, 12) 
+    intensity_factor = round(random.uniform(0.6, 0.95), 2) 
+    max_gradient = random.randint(4, 13) 
+    cadence = random.randint(60, 84)
+    max_hr_zone = random.randint(3, 5)
+    distance = round(random.uniform(10.0, 99.0), 2)
+    region = "Madrid"
+    device = "Garmin"
+    is_classic = False
+    is_exotic = False
+    participants = 1
     
     day = random.randint(1, 30)
-    hour = random.randint(6, 22)
+    hour = random.randint(9, 20)
+
+    # --- LÓGICA DE EXTRACCIÓN (Basado en el nombre del archivo para la Demo) ---
+    # Si el usuario quiere superar el reto, el analizador busca "pistas" en el nombre del archivo.
+    if "panadero" in fname: hour = 7
+    if "vampiro" in fname: hour = 22
+    if "finde" in fname or "sabado" in fname or "domingo" in fname: day = 7 # 7 de Marzo 2026 es Sábado
+    if "expreso" in fname: 
+        duration = 40
+        intensity_factor = 1.05
+    if "galicia" in fname: region = "Galicia"
+    if "bkool" in fname or "rouvy" in fname: device = "Rouvy"
+    if "clasica" in fname or "monumento" in fname or "flandes" in fname: is_classic = True
+    if "exotico" in fname or "africa" in fname or "japon" in fname: is_exotic = True
+    if "molinillo" in fname or "cadencia" in fname: cadence = 92
+    if "confort" in fname or "z2" in fname: 
+        max_hr_zone = 2
+        duration = max(60, duration)
+    if "muro" in fname or "rampa" in fname or "angliru" in fname: max_gradient = 16
+    if "capicua" in fname: distance = 45.54
+    if "grupeta" in fname or "amigos" in fname: participants = 4
+    if "fondo" in fname: duration = 195
+    if "torrezno" in fname or "kcal" in fname: calories = 1600
+    
     simulated_date = datetime.datetime(2026, 3, day, hour, 30)
     
     return {
@@ -249,19 +269,48 @@ def parse_fit_file_simulated(uploaded_file):
         "duration": duration,
         "calories": calories,
         "if": intensity_factor,
-        "gradient": max_gradient
+        "gradient": max_gradient,
+        "cadence": cadence,
+        "max_hr_zone": max_hr_zone,
+        "distance": distance,
+        "region": region,
+        "device": device,
+        "is_classic": is_classic,
+        "is_exotic": is_exotic,
+        "participants": participants
     }
 
-# --- MOTOR DE REGLAS ---
+# --- MOTOR DE REGLAS EXHAUSTIVO ---
 def validate_rules(stats, rules):
     logs = []
     is_valid = True
     
     if stats['date'].year == 2026 and stats['date'].month == 3:
-        logs.append("✅ Fecha correcta")
+        pass # Fecha correcta, omitimos log para no saturar
     else:
         logs.append("⚠️ Fecha incorrecta (Demo)")
         
+    if "maxTime" in rules:
+        time_str = stats['date'].strftime("%H:%M")
+        if time_str < rules['maxTime']: logs.append(f"✅ Hora OK ({time_str})")
+        else:
+             logs.append(f"❌ Terminaste tarde ({time_str})")
+             is_valid = False
+
+    if "minTime" in rules:
+        time_str = stats['date'].strftime("%H:%M")
+        if time_str > rules['minTime']: logs.append(f"✅ Hora OK ({time_str})")
+        else:
+             logs.append(f"❌ Empezaste pronto ({time_str})")
+             is_valid = False
+
+    if "mustBeWeekend" in rules:
+        # En Python, 5 es Sábado y 6 es Domingo
+        if stats['date'].weekday() >= 5: logs.append(f"✅ Es fin de semana")
+        else:
+             logs.append(f"❌ Es día de diario")
+             is_valid = False
+
     if "minDuration" in rules:
         if stats['duration'] >= rules['minDuration']: logs.append(f"✅ Duración OK ({stats['duration']}m)")
         else:
@@ -269,9 +318,9 @@ def validate_rules(stats, rules):
             is_valid = False
             
     if "maxDuration" in rules:
-        if stats['duration'] <= rules['maxDuration']: logs.append(f"✅ Tiempo OK ({stats['duration']}m)")
+        if stats['duration'] <= rules['maxDuration']: logs.append(f"✅ Tiempo Expreso OK ({stats['duration']}m)")
         else:
-            logs.append(f"❌ Muy largo ({stats['duration']}m)")
+            logs.append(f"❌ Te pasaste de tiempo ({stats['duration']}m)")
             is_valid = False
 
     if "minCalories" in rules:
@@ -287,23 +336,58 @@ def validate_rules(stats, rules):
             is_valid = False
             
     if "minGradient" in rules:
-        if stats['gradient'] >= rules['minGradient']: logs.append(f"✅ Rampa OK ({stats['gradient']}%)")
+        if stats['gradient'] >= rules['minGradient']: logs.append(f"✅ Muro superado ({stats['gradient']}%)")
         else:
-            logs.append(f"❌ Muy suave ({stats['gradient']}%)")
+            logs.append(f"❌ Rampa suave ({stats['gradient']}%)")
             is_valid = False
-            
-    if "maxTime" in rules:
-        time_str = stats['date'].strftime("%H:%M")
-        if time_str < rules['maxTime']: logs.append(f"✅ Hora OK ({time_str})")
+
+    if "requiredRegion" in rules:
+        if stats['region'] == rules['requiredRegion']: logs.append(f"✅ Región OK ({stats['region']})")
         else:
-             logs.append(f"❌ Tarde ({time_str})")
+             logs.append(f"❌ Estás en {stats['region']}")
              is_valid = False
 
-    if "minTime" in rules:
-        time_str = stats['date'].strftime("%H:%M")
-        if time_str > rules['minTime']: logs.append(f"✅ Hora OK ({time_str})")
+    if "requiredDevice" in rules:
+        if stats['device'] in rules['requiredDevice']: logs.append(f"✅ Virtual OK ({stats['device']})")
         else:
-             logs.append(f"❌ Pronto ({time_str})")
+             logs.append(f"❌ Dispositivo incorrecto ({stats['device']})")
+             is_valid = False
+
+    if "isClassic" in rules:
+        if stats['is_classic']: logs.append(f"✅ Monumento detectado")
+        else:
+             logs.append(f"❌ Ruta estándar")
+             is_valid = False
+
+    if "isExotic" in rules:
+        if stats['is_exotic']: logs.append(f"✅ Continente exótico")
+        else:
+             logs.append(f"❌ Ruta común")
+             is_valid = False
+
+    if "minCadence" in rules:
+        if stats['cadence'] >= rules['minCadence']: logs.append(f"✅ Molinillo OK ({stats['cadence']} rpm)")
+        else:
+             logs.append(f"❌ Atrancado ({stats['cadence']} rpm)")
+             is_valid = False
+
+    if "maxHRZone" in rules:
+        if stats['max_hr_zone'] <= rules['maxHRZone']: logs.append(f"✅ Zona controlada (Max Z{stats['max_hr_zone']})")
+        else:
+             logs.append(f"❌ Te pasaste de pulso (Z{stats['max_hr_zone']})")
+             is_valid = False
+
+    if "isPalindrome" in rules:
+        d_str = str(stats['distance']).replace('.', '')
+        if d_str == d_str[::-1]: logs.append(f"✅ Capicúa ({stats['distance']} km)")
+        else:
+             logs.append(f"❌ No es capicúa ({stats['distance']} km)")
+             is_valid = False
+
+    if "minParticipants" in rules:
+        if stats['participants'] >= rules['minParticipants']: logs.append(f"✅ Grupeta OK ({stats['participants']} ciclistas)")
+        else:
+             logs.append(f"❌ Ruta en solitario")
              is_valid = False
              
     return is_valid, logs
@@ -315,7 +399,7 @@ with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.markdown('<p class="caption-text">Un reto para las más Ciclópatas</p>', unsafe_allow_html=True)
+    st.markdown('<p class="caption-text">Un reto para los más ciclópatas</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -328,6 +412,16 @@ with cols_metrics[1]:
     st.metric("RETOS", f"{completed_count}/16")
 with cols_metrics[2]:
     st.metric("ESTADO", "🔥" if completed_count > 0 else "💤")
+
+with st.expander("ℹ️ Instrucciones de uso"):
+    st.markdown("""
+    **¿Cómo jugar?**
+    1. Despliega una casilla del bingo que quieras intentar.
+    2. Sube el archivo `.FIT` de tu ruta (o imagen en *Coffee Ride*).
+    3. El sistema evaluará tus datos. ¡Si cumples las reglas, la casilla será tuya!
+    
+    💡 **Tip para la Demo:** Como estamos simulando la lectura en esta versión web, renombra tu archivo en tu ordenador para que contenga palabras clave (ej. `ruta_galicia.fit`, `doblete_finde.fit`, `muro_angliru.fit`, `capicua.fit`, `z2.fit`) y el simulador generará los datos correctos para superar el reto.
+    """)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -371,18 +465,21 @@ for row in rows:
                                     time.sleep(0.5)
                                     st.rerun()
                             else:
-                                with st.spinner('Validando...'):
+                                with st.spinner('Validando reglas...'):
                                     stats = parse_fit_file_simulated(uploaded_file)
                                     is_valid, logs = validate_rules(stats, challenge['rules'])
                                     
-                                    st.markdown(f"**{stats['duration']}min** | **{stats['calories']}kcal**")
+                                    # Mostrar resumen rápido de datos extraídos
+                                    st.markdown(f"**{stats['distance']}km** | **{stats['duration']}min** | **{stats['cadence']}rpm**")
                                     
                                     if not is_valid:
                                         for log in logs:
                                             if "❌" in log: st.caption(f":red[{log}]")
-                                        st.error("No válido")
+                                        st.error("Archivo no válido para este reto")
                                     else:
-                                        st.success("¡Válido!")
+                                        for log in logs:
+                                            if "✅" in log: st.caption(f":green[{log}]")
+                                        st.success("¡Cumple todas las reglas!")
                                         if st.button("CONFIRMAR", key=f"btn_{challenge['id']}"):
                                             challenge['completed'] = True
                                             challenge['date_str'] = stats['date'].strftime("%d/%m")
