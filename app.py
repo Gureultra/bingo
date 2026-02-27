@@ -20,24 +20,19 @@ except ImportError:
     st.error("🚨 Falta la librería 'fitparse'. Añádela a tu requirements.txt")
     st.stop()
 
-# --- CONEXIÓN A GOOGLE SHEETS (CON EL TRUCO DEL JSON STRING) ---
+# --- CONEXIÓN A GOOGLE SHEETS ---
 @st.cache_resource
 def init_connection():
     try:
         scopes = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-        
-        # Leemos el JSON en crudo desde los secrets
         json_str = st.secrets["gcp_service_account_json"]
         creds_dict = json.loads(json_str)
-        
         creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scopes)
         client = gspread.authorize(creds)
-        # Asegúrate de que tu hoja se llame exactamente "BingoGureDB"
         sheet = client.open("BingoGureDB").sheet1 
         return sheet
     except Exception as e:
-        # Modo local/demo si falla la conexión
-        st.sidebar.warning(f"⚠️ Modo Local (Error BBDD: {e})")
+        st.sidebar.warning(f"⚠️ Modo Local (Error BBDD o no configurada)")
         return None
 
 sheet = init_connection()
@@ -55,7 +50,6 @@ def load_user_progress(username):
 def save_challenge_completion(username, challenge_id, date_str, evidence="FIT Validado"):
     if sheet is None: return
     try:
-        # Añadir fila: Usuario, Reto_ID, Fecha, Evidencia
         sheet.append_row([username, challenge_id, date_str, evidence])
     except Exception as e:
         st.error(f"Error al guardar en base de datos: {e}")
@@ -96,69 +90,78 @@ st.markdown("""
 
 # --- DEFINICIÓN DE RETOS BASE ---
 BASE_CHALLENGES = [
-    {"id": 1, "title": "El Panadero", "desc": "Terminar antes de las 08:00 AM", "icon": "☀️", "type": "fit", "rules": {"maxTime": "08:00"}},
-    {"id": 2, "title": "El Vampiro", "desc": "Empezar después de las 21:00 PM", "icon": "🌙", "type": "fit", "rules": {"minTime": "21:00"}},
-    {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "type": "fit", "rules": {"mustBeWeekend": True}},
-    {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0", "icon": "⚡", "type": "fit", "rules": {"maxDuration": 45, "minIF": 1.0}},
-    {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "type": "fit", "rules": {"requiredRegion": "Galicia"}},
-    {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "type": "fit", "rules": {"requiredDevice": ["bkool", "rouvy"]}},
-    {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "type": "fit", "rules": {"isClassic": True}},
-    {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "type": "fit", "rules": {"isExotic": True}},
-    {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "type": "fit", "rules": {"minCadence": 85}},
-    {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "type": "fit", "rules": {"minDuration": 60, "maxHRZone": 2}},
-    {"id": 11, "title": "El Muro", "desc": "Rampa del 14% o superior", "icon": "⛰️", "type": "fit", "rules": {"minGradient": 14}},
-    {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "rules": {"isPalindrome": True}},
-    {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "type": "image", "rules": {}},
-    {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "rules": {"minParticipants": 2}},
-    {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "type": "fit", "rules": {"minDuration": 180}},
-    {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "type": "fit", "rules": {"minCalories": 1500}},
+    {"id": 1, "title": "El Panadero", "desc": "Terminar antes de las 08:00 AM", "icon": "☀️", "type": "fit", "rules": {"maxTime": "08:00"}, "completed": False},
+    {"id": 2, "title": "El Vampiro", "desc": "Empezar después de las 21:00 PM", "icon": "🌙", "type": "fit", "rules": {"minTime": "21:00"}, "completed": False},
+    {"id": 3, "title": "Doblete Finde", "desc": "Entrenar Sábado y Domingo", "icon": "📅", "type": "fit", "rules": {"mustBeWeekend": True}, "completed": False},
+    {"id": 4, "title": "El Expreso", "desc": "< 45 min a IF ≥ 1.0", "icon": "⚡", "type": "fit", "rules": {"maxDuration": 45, "minIF": 1.0}, "completed": False},
+    {"id": 5, "title": "Viva Galicia", "desc": "Ruta por tierras gallegas", "icon": "🗺️", "type": "fit", "rules": {"requiredRegion": "Galicia"}, "completed": False},
+    {"id": 6, "title": "Ruta Bkool", "desc": "Completar ruta Bkool en Rouvy", "icon": "📺", "type": "fit", "rules": {"requiredDevice": ["bkool", "rouvy"]}, "completed": False},
+    {"id": 7, "title": "La Clásica", "desc": "Tramo mítico o Monumento", "icon": "🏆", "type": "fit", "rules": {"isClassic": True}, "completed": False},
+    {"id": 8, "title": "El Exótico", "desc": "Ruta en continente distinto", "icon": "🌍", "type": "fit", "rules": {"isExotic": True}, "completed": False},
+    {"id": 9, "title": "El Molinillo", "desc": "Cadencia media > 85 rpm", "icon": "🔄", "type": "fit", "rules": {"minCadence": 85}, "completed": False},
+    {"id": 10, "title": "Zona Confort", "desc": ">1h sin pasar de Zona 2", "icon": "❤️", "type": "fit", "rules": {"minDuration": 60, "maxHRZone": 2}, "completed": False},
+    {"id": 11, "title": "El Muro", "desc": "Rampa del 14% o superior", "icon": "⛰️", "type": "fit", "rules": {"minGradient": 14}, "completed": False},
+    {"id": 12, "title": "Capicúa", "desc": "Distancia capicúa (ej: 22.22km)", "icon": "#️⃣", "type": "fit", "rules": {"isPalindrome": True}, "completed": False},
+    {"id": 13, "title": "Coffee Ride", "desc": "Foto con café/cerveza", "icon": "☕", "type": "image", "rules": {}, "completed": False},
+    {"id": 14, "title": "Grupeta", "desc": "Coincidir con alguien", "icon": "👥", "type": "fit", "rules": {"minParticipants": 2}, "completed": False},
+    {"id": 15, "title": "Gran Fondo", "desc": "Sesión > 3h seguidas", "icon": "📈", "type": "fit", "rules": {"minDuration": 180}, "completed": False},
+    {"id": 16, "title": "Los Torreznos", "desc": "Quemar > 1.500 kcal", "icon": "🔥", "type": "fit", "rules": {"minCalories": 1500}, "completed": False},
 ]
 
-# --- LÓGICA DE LOGIN ---
+# Inicializar estado base
 if 'username' not in st.session_state:
     st.session_state.username = None
+if 'challenges' not in st.session_state:
+    st.session_state.challenges = [c.copy() for c in BASE_CHALLENGES]
 
-if st.session_state.username is None:
-    col_logo, _ = st.columns([1, 2])
-    st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", width=200)
-    st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
-    st.markdown("### Identifícate para guardar tu progreso")
-    
-    with st.form("login_form"):
-        username_input = st.text_input("Nombre de usuario (Telegram o Alias)", placeholder="Ej: globero_99")
-        submit_button = st.form_submit_button("Entrar")
-        
-        if submit_button and username_input:
-            st.session_state.username = username_input
-            # Cargar estado guardado de este usuario
-            completed_ids = load_user_progress(username_input)
-            
-            # Inicializar los retos con el estado del usuario
-            st.session_state.challenges = []
-            for base_c in BASE_CHALLENGES:
-                c_copy = base_c.copy()
-                c_copy["completed"] = c_copy["id"] in completed_ids
-                st.session_state.challenges.append(c_copy)
-            
-            st.rerun()
-    st.stop()
-
-# --- USUARIO LOGUEADO: CABECERA ---
+# --- CABECERA ---
 col_logo, col_title = st.columns([1, 3])
 with col_logo:
     st.image("https://gureultra.com/wp-content/uploads/2024/10/GureUltra.png", use_container_width=True)
 with col_title:
     st.markdown("<h1>BINGO CICLISTA <span>GURE</span></h1>", unsafe_allow_html=True)
     st.markdown('<p class="caption-text">Un reto para los más ciclópatas</p>', unsafe_allow_html=True)
-    
-    # Botón para cerrar sesión o cambiar de usuario
-    st.caption(f"👤 Ciclópata: **{st.session_state.username}**")
-    if st.button("Cambiar usuario"):
-        st.session_state.username = None
-        st.rerun()
 
 st.markdown("---")
 
+# --- IDENTIFICACIÓN ---
+if st.session_state.username is None:
+    with st.container(border=True):
+        st.markdown("### 👋 Identifícate para participar")
+        st.markdown("Puedes ver todos los retos abajo, pero **necesitas introducir tu alias** para poder subir tus archivos y guardar el progreso.")
+        with st.form("login_form", border=False):
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                username_input = st.text_input("Nombre de usuario", placeholder="Tu alias en Telegram...", label_visibility="collapsed")
+            with col2:
+                submit_button = st.form_submit_button("Entrar", use_container_width=True)
+            
+            if submit_button:
+                if username_input.strip() != "":
+                    st.session_state.username = username_input.strip()
+                    # Cargar estado guardado de este usuario
+                    completed_ids = load_user_progress(st.session_state.username)
+                    
+                    # Actualizar los retos
+                    st.session_state.challenges = []
+                    for base_c in BASE_CHALLENGES:
+                        c_copy = base_c.copy()
+                        c_copy["completed"] = c_copy["id"] in completed_ids
+                        st.session_state.challenges.append(c_copy)
+                    st.rerun()
+                else:
+                    st.error("Por favor, escribe un nombre.")
+else:
+    col_user, col_btn = st.columns([3, 1])
+    with col_user:
+        st.success(f"👤 Ciclópata conectado: **{st.session_state.username}**")
+    with col_btn:
+        if st.button("Cambiar usuario", use_container_width=True):
+            st.session_state.username = None
+            st.session_state.challenges = [c.copy() for c in BASE_CHALLENGES]
+            st.rerun()
+
+# --- PROGRESO GLOBAL ---
 completed_count = sum(1 for c in st.session_state.challenges if c['completed'])
 cols_metrics = st.columns([3, 1, 1])
 with cols_metrics[0]:
@@ -172,7 +175,7 @@ with cols_metrics[2]:
 with st.expander("ℹ️ Instrucciones de uso"):
     st.markdown("""
     **¿Cómo jugar?**
-    1. Despliega una casilla del bingo que quieras intentar.
+    1. Despliega una casilla del bingo que quieras intentar (debes estar identificado).
     2. Sube el archivo `.FIT` real de tu dispositivo (Garmin, Wahoo, Coros, etc.) o simulador.
     3. Para el reto *Coffee Ride*, sube la foto en JPG/PNG.
     4. El sistema evaluará los metadatos de tu archivo. ¡Tus avances se guardan automáticamente!
@@ -180,7 +183,7 @@ with st.expander("ℹ️ Instrucciones de uso"):
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- EXTRACTOR DE DATOS FIT REAL (Usando fitparse) ---
+# --- EXTRACTOR Y VALIDADOR DE FIT ---
 def parse_fit_file_real(uploaded_file):
     try:
         fitfile = fitparse.FitFile(uploaded_file.read())
@@ -211,7 +214,6 @@ def parse_fit_file_real(uploaded_file):
     except Exception as e:
         return None
 
-# --- MOTOR DE REGLAS EXHAUSTIVO ---
 def validate_rules(stats, rules):
     logs = []
     is_valid = True
@@ -285,68 +287,71 @@ for row in rows:
                 if challenge['completed']:
                     st.caption(f"📅 Registrado en la base de datos")
                 else:
-                    challenge_type = challenge.get('type', 'fit')
-                    label_text = "Sube imagen" if challenge_type == 'image' else "Subir .FIT"
-                    file_types = ['png', 'jpg', 'jpeg'] if challenge_type == 'image' else ['fit']
-                    
-                    with st.expander(label_text):
-                        uploaded_file = st.file_uploader("", type=file_types, key=f"up_{challenge['id']}", label_visibility="collapsed")
+                    # Si no está logueado, le pedimos que se identifique arriba
+                    if st.session_state.username is None:
+                        st.markdown("<p style='text-align:center; font-size:11px; color:#ef4444; font-weight:bold;'>🔒 Identifícate para validar</p>", unsafe_allow_html=True)
+                    else:
+                        challenge_type = challenge.get('type', 'fit')
+                        label_text = "Sube imagen" if challenge_type == 'image' else "Subir .FIT"
+                        file_types = ['png', 'jpg', 'jpeg'] if challenge_type == 'image' else ['fit']
                         
-                        if uploaded_file:
-                            if challenge_type == 'image':
-                                st.image(uploaded_file, caption="Evidencia", use_container_width=True)
-                                if st.button("CONFIRMAR FOTO", key=f"btn_{challenge['id']}"):
-                                    # GUARDAR EN GOOGLE SHEETS
-                                    date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
-                                    save_challenge_completion(st.session_state.username, challenge['id'], date_str, "Foto")
-                                    
-                                    challenge['completed'] = True
-                                    st.balloons()
-                                    time.sleep(0.5)
-                                    st.rerun()
-                            else:
-                                with st.spinner('Procesando archivo binario...'):
-                                    stats = parse_fit_file_real(uploaded_file)
-                                    
-                                    if stats is None:
-                                        st.error("Error leyendo el archivo FIT. Puede estar corrupto o usar un formato no soportado.")
-                                    else:
-                                        is_valid, logs = validate_rules(stats, challenge['rules'])
+                        with st.expander(label_text):
+                            uploaded_file = st.file_uploader("", type=file_types, key=f"up_{challenge['id']}", label_visibility="collapsed")
+                            
+                            if uploaded_file:
+                                if challenge_type == 'image':
+                                    st.image(uploaded_file, caption="Evidencia", use_container_width=True)
+                                    if st.button("CONFIRMAR FOTO", key=f"btn_{challenge['id']}"):
+                                        date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                                        save_challenge_completion(st.session_state.username, challenge['id'], date_str, "Foto")
+                                        challenge['completed'] = True
+                                        st.balloons()
+                                        time.sleep(0.5)
+                                        st.rerun()
+                                else:
+                                    with st.spinner('Procesando archivo binario...'):
+                                        stats = parse_fit_file_real(uploaded_file)
                                         
-                                        st.markdown(f"**{stats['distance']:.1f}km** | **{stats['duration']:.0f}min** | **{stats['cadence']}rpm**")
-                                        
-                                        if not is_valid:
-                                            for log in logs:
-                                                if "❌" in log: st.caption(f":red[{log}]")
-                                            st.error("Archivo no válido para este reto")
+                                        if stats is None:
+                                            st.error("Error leyendo el archivo FIT.")
                                         else:
-                                            for log in logs:
-                                                if "✅" in log: st.caption(f":green[{log}]")
-                                                elif "⚠️" in log: st.caption(f":orange[{log}]")
-                                            st.success("¡Reto conseguido!")
-                                            if st.button("GUARDAR LOGRO", key=f"btn_{challenge['id']}"):
-                                                # GUARDAR EN GOOGLE SHEETS
-                                                date_str = stats['date'].strftime("%Y-%m-%d %H:%M")
-                                                save_challenge_completion(st.session_state.username, challenge['id'], date_str, uploaded_file.name)
-                                                
-                                                challenge['completed'] = True
-                                                st.balloons()
-                                                time.sleep(0.5)
-                                                st.rerun()
+                                            is_valid, logs = validate_rules(stats, challenge['rules'])
+                                            
+                                            st.markdown(f"**{stats['distance']:.1f}km** | **{stats['duration']:.0f}min** | **{stats['cadence']}rpm**")
+                                            
+                                            if not is_valid:
+                                                for log in logs:
+                                                    if "❌" in log: st.caption(f":red[{log}]")
+                                                st.error("Archivo no válido para este reto")
+                                            else:
+                                                for log in logs:
+                                                    if "✅" in log: st.caption(f":green[{log}]")
+                                                    elif "⚠️" in log: st.caption(f":orange[{log}]")
+                                                st.success("¡Reto conseguido!")
+                                                if st.button("GUARDAR LOGRO", key=f"btn_{challenge['id']}"):
+                                                    date_str = stats['date'].strftime("%Y-%m-%d %H:%M")
+                                                    save_challenge_completion(st.session_state.username, challenge['id'], date_str, uploaded_file.name)
+                                                    challenge['completed'] = True
+                                                    st.balloons()
+                                                    time.sleep(0.5)
+                                                    st.rerun()
 
 st.markdown("---")
 
 # --- BOTÓN DE COMPARTIR AVANZADO ---
 group_link = "https://t.me/GURE_ultra_Channel"
 
-completed_list = [c['title'] for c in st.session_state.challenges if c['completed']]
-if completed_list:
-    challenges_joined = "\\n✅ ".join(completed_list)
-    clipboard_content = f"🚴‍♂️ *BINGO GURE 2026* ({st.session_state.username}) 🔴⚫\\n\\n🏆 Progreso: {completed_count}/16\\n\\nHe completado:\\n✅ {challenges_joined}\\n\\n#BingoGure"
+# Generar texto del portapapeles
+if st.session_state.username:
+    completed_list = [c['title'] for c in st.session_state.challenges if c['completed']]
+    if completed_list:
+        challenges_joined = "\\n✅ ".join(completed_list)
+        clipboard_content = f"🚴‍♂️ *BINGO GURE 2026* ({st.session_state.username}) 🔴⚫\\n\\n🏆 Progreso: {completed_count}/16\\n\\nHe completado:\\n✅ {challenges_joined}\\n\\n#BingoGure"
+    else:
+        clipboard_content = f"🚴‍♂️ *BINGO GURE 2026* ({st.session_state.username}) 🔴⚫\\n\\n¡Empiezo el reto! 0/16 completados.\\n\\n#BingoGure"
 else:
-    clipboard_content = f"🚴‍♂️ *BINGO GURE 2026* ({st.session_state.username}) 🔴⚫\\n\\n¡Empiezo el reto! 0/16 completados.\\n\\n#BingoGure"
+    clipboard_content = "🚴‍♂️ *BINGO GURE 2026* 🔴⚫\\n\\n¡Únete al reto ciclista de Marzo!\\n\\n#BingoGure"
 
-# Reemplazamos las comillas dobles y simples para que la inyección en JS funcione correctamente
 clipboard_content_js = clipboard_content.replace('"', '\\"').replace("'", "\\'")
 
 st.markdown(f"""
